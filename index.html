@@ -191,6 +191,14 @@
       position: relative;
       text-align: center;
     }
+    @media (max-width: 640px) {
+      #hero {
+        align-items: flex-start;
+        padding-top: 90px;
+        padding-bottom: 64px;
+        min-height: unset;
+      }
+    }
 
     .hero-q {
       font-family: 'Syne', sans-serif;
@@ -270,11 +278,6 @@
       .nav-pill { display: none; }
       /* masque le badge "Bientôt disponible" dans le hero */
       .hero-badge { display: none; }
-      /* hero phone légèrement plus petit */
-      .hero-iphone {
-        width: 190px !important;
-        height: 400px !important;
-      }
     }
 
     /* ─── Sections shared ───────────────────────────────────── */
