@@ -1661,19 +1661,19 @@
           <div id="finner">
             <h2 class="fh">Rejoins la <span class="gt">liste d'attente</span>.</h2>
             <p class="fs-sub">Accès prioritaire à la bêta. Gratuit. On te contacte dès que c'est prêt.</p>
-            <form id="mform" novalidate>
+            <form id="mform" action="https://formspree.io/f/mlgoondy" method="POST">
               <div class="fg-row">
                 <label class="fl" for="fp">Prénom</label>
-                <input class="fin" id="fp" type="text" placeholder="Thomas" required autocomplete="given-name" />
+                <input class="fin" id="fp" name="prénom" type="text" placeholder="Thomas" required autocomplete="given-name" />
               </div>
               <div class="fg-row">
                 <label class="fl" for="fe">Email</label>
-                <input class="fin" id="fe" type="email" placeholder="thomas@exemple.ch" required autocomplete="email" />
+                <input class="fin" id="fe" name="email" type="email" placeholder="thomas@exemple.ch" required autocomplete="email" />
               </div>
               <div class="fg-row">
                 <label class="fl" for="fsi">Ta situation</label>
                 <div class="fsel-w">
-                  <select class="fsel" id="fsi" required>
+                  <select class="fsel" id="fsi" name="situation" required>
                     <option value="" disabled selected>Choisir ta situation…</option>
                     <option value="etudiant">Étudiant(e)</option>
                     <option value="independant">Indépendant(e) / Freelance</option>
@@ -1688,8 +1688,8 @@
           </div>
           <div class="fdone" id="fdone">
             <span class="ck">🎉</span>
-            <h3 class="gt">Tu es dans la liste !</h3>
-            <p>On te contacte dès que la bêta ouvre.<br>Prépare-toi à reprendre le contrôle.</p>
+            <h3 class="gt">Merci !</h3>
+            <p style="color:#4ade80;font-weight:600">Tu seras parmi les premiers à découvrir Franky 🎉</p>
           </div>
         </div>
       </div>
@@ -1747,23 +1747,24 @@
       });
     });
 
-    /* ── Form ── */
+    /* ── Form → Formspree ── */
     const form   = document.getElementById('mform');
     const finner = document.getElementById('finner');
     const fdone  = document.getElementById('fdone');
 
-    form.addEventListener('submit', e => {
+    form.addEventListener('submit', async e => {
       e.preventDefault();
+
       const fp  = document.getElementById('fp');
       const fe  = document.getElementById('fe');
       const fsi = document.getElementById('fsi');
 
+      // Validation
       const checks = [
         { el: fp,  ok: fp.value.trim().length > 0 },
         { el: fe,  ok: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fe.value.trim()) },
         { el: fsi, ok: !!fsi.value },
       ];
-
       let valid = true;
       checks.forEach(({ el, ok }) => {
         if (!ok) {
@@ -1776,14 +1777,36 @@
       if (!valid) return;
 
       const btn = form.querySelector('.btn-sub');
-      btn.textContent = 'En route…';
+      btn.textContent  = 'Envoi en cours…';
       btn.style.opacity = '.65';
       btn.disabled = true;
 
-      setTimeout(() => {
-        finner.style.display = 'none';
-        fdone.style.display  = 'block';
-      }, 800);
+      try {
+        const res = await fetch(form.action, {
+          method:  'POST',
+          headers: { 'Accept': 'application/json' },
+          body:    new FormData(form),
+        });
+
+        if (res.ok) {
+          finner.style.display = 'none';
+          fdone.style.display  = 'block';
+        } else {
+          throw new Error(`HTTP ${res.status}`);
+        }
+      } catch {
+        btn.textContent  = 'Réessayer';
+        btn.style.opacity = '1';
+        btn.disabled = false;
+        let errEl = form.querySelector('.form-error');
+        if (!errEl) {
+          errEl = document.createElement('p');
+          errEl.className = 'form-error';
+          errEl.style.cssText = 'color:rgba(255,120,100,.85);font-size:.78rem;margin-top:10px;text-align:center';
+          btn.after(errEl);
+        }
+        errEl.textContent = "Une erreur s'est produite. Réessaie dans un instant.";
+      }
     });
   </script>
 </body>
