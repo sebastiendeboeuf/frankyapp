@@ -236,6 +236,47 @@
     }
     @keyframes fi { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
+    /* hero mockup phone */
+    .hero-phone-wrap {
+      margin-top: 52px;
+      display: flex;
+      justify-content: center;
+      animation: fi .9s .6s ease both;
+    }
+    .hero-iphone {
+      width: 220px !important;
+      height: 460px !important;
+      transform: none !important;
+      margin-top: 0 !important;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.05),
+        0 0 0 7px rgba(255,255,255,.025),
+        0 40px 100px rgba(0,0,0,.7),
+        0 0 80px rgba(74,222,128,.1) !important;
+    }
+    .hero-iphone:hover {
+      transform: translateY(-6px) scale(1.02) !important;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.07),
+        0 0 0 7px rgba(255,255,255,.04),
+        0 56px 120px rgba(0,0,0,.75),
+        0 0 100px rgba(74,222,128,.15) !important;
+    }
+
+    /* ─── Mobile tweaks ─────────────────────────────────────── */
+    @media (max-width: 640px) {
+      /* centre le logo Franky dans la nav */
+      nav .ni { justify-content: center; }
+      .nav-pill { display: none; }
+      /* masque le badge "Bientôt disponible" dans le hero */
+      .hero-badge { display: none; }
+      /* hero phone légèrement plus petit */
+      .hero-iphone {
+        width: 190px !important;
+        height: 400px !important;
+      }
+    }
+
     /* ─── Sections shared ───────────────────────────────────── */
     section { padding: 88px 0; position: relative; z-index: 1; }
 
@@ -1202,7 +1243,7 @@
         <span class="l"><span class="li">où tu vas</span></span>
         <span class="l"><span class="li gt">dans la vie ?</span></span>
       </h1>
-      <p class="hero-s">Appart, voyages, voiture : Franky te donne une vision claire pour atteindre ce qui compte pour toi.</p>
+      <p class="hero-s">Appart, voyages, voiture : Franky, l'app qui te donne une vision claire pour atteindre ce qui compte pour toi.</p>
       <div class="hero-a">
         <a href="#waitlist" class="btn">Je veux Franky dans ma vie</a>
         <div class="hero-badge">
@@ -1210,6 +1251,69 @@
           Bientôt disponible
         </div>
       </div>
+
+      <!-- mockup iPhone hero — écran quête active -->
+      <div class="hero-phone-wrap">
+        <div class="iphone hero-iphone">
+          <div class="screen">
+            <div class="s-hdr">
+              <span class="s-logo">FRANKY</span>
+              <span style="font-size:.65rem;color:rgba(255,255,255,.3)">Quêtes</span>
+            </div>
+            <div class="s-body">
+
+              <!-- badge quête active -->
+              <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:6px;padding:5px 10px;align-self:flex-start">
+                <span style="width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0"></span>
+                <span style="font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green)">Quête active · Voyage</span>
+              </div>
+
+              <!-- titre -->
+              <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--white);line-height:1.25">✈️ Mon voyage de rêve</div>
+
+              <!-- niveaux -->
+              <div class="s-card" style="background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.15);padding:14px 12px">
+                <div class="q-levels">
+                  <div class="q-lline"></div>
+                  <div class="q-lfill"></div>
+                  <div class="q-lvl">
+                    <div class="q-dot done">✓</div>
+                    <span class="q-amt">200</span>
+                  </div>
+                  <div class="q-lvl">
+                    <div class="q-dot done">✓</div>
+                    <span class="q-amt">500</span>
+                  </div>
+                  <div class="q-lvl">
+                    <div class="q-dot on">3</div>
+                    <span class="q-amt on">1'000</span>
+                  </div>
+                  <div class="q-lvl">
+                    <div class="q-dot off">4</div>
+                    <span class="q-amt">2'000</span>
+                  </div>
+                </div>
+
+                <!-- barre de progression -->
+                <div class="s-row" style="margin-bottom:5px">
+                  <span class="lbl">Niveau 3 en cours</span>
+                  <span class="val g">520 <span style="color:rgba(255,255,255,.3);font-weight:400">/ 1'000</span></span>
+                </div>
+                <div class="s-bar-wrap"><div class="s-bar" style="width:52%"></div></div>
+              </div>
+
+              <!-- message Franky -->
+              <div class="s-franky-msg">
+                <strong>Franky :</strong> Encore 480 CHF et tu pars en voyage 🌍<br>
+                <span style="color:rgba(255,255,255,.32);font-size:.6rem">À ton rythme actuel : dans 6 semaines.</span>
+              </div>
+
+            </div>
+          </div>
+          <div class="island"></div>
+        </div>
+      </div>
+
     </div>
   </section>
 
