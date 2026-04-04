@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Franky — Sais-tu vraiment où tu vas dans la vie ?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Variables ─────────────────────────────────────────── */
+    :root {
+      --bg:      #0a0a0a;
+      --bg2:     #0d0d0d;
+      --card:    #111111;
+      --green:   #4ade80;
+      --gold:    #fbbf24;
+      --white:   #efefef;
+      --muted:   #555555;
+      --grad:    linear-gradient(135deg, #4ade80, #fbbf24);
+      --grad-tx: linear-gradient(135deg, #4ade80 0%, #86efac 40%, #fbbf24 100%);
+      --glow-g:  rgba(74,222,128,.3);
+    }
+
+    /* ─── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ─── Grain ─────────────────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: .022;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* ─── Ambient glow ──────────────────────────────────────── */
+    .amb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(130px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .amb-1 {
+      width: 700px; height: 700px;
+      top: -250px; right: -200px;
+      background: rgba(74,222,128,.045);
+      animation: breathe 14s ease-in-out infinite;
+    }
+    .amb-2 {
+      width: 500px; height: 500px;
+      bottom: 15%; left: -180px;
+      background: rgba(251,191,36,.035);
+      animation: breathe 18s ease-in-out infinite 4s;
+    }
+    @keyframes breathe {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.2); opacity: .6; }
+    }
+
+    /* ─── Cursor glow ───────────────────────────────────────── */
+    #cg {
+      position: fixed;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(74,222,128,.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+      transform: translate(-50%,-50%);
+      transition: left .35s ease, top .35s ease;
+      display: none;
+    }
+    @media (hover: hover) { #cg { display: block; } }
+
+    /* ─── Utilities ─────────────────────────────────────────── */
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .gt {
+      background: var(--grad-tx);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 34px;
+      background: var(--grad);
+      border: none;
+      border-radius: 6px;
+      color: #060606;
+      font-family: 'Syne', sans-serif;
+      font-size: .93rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: .03em;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .25s;
+    }
+    .btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.18), transparent);
+      opacity: 0;
+      transition: opacity .25s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(74,222,128,.28), 0 4px 14px rgba(251,191,36,.14); }
+    .btn:hover::after { opacity: 1; }
+    .btn:active { transform: translateY(0); }
+
+    /* ─── Reveal ────────────────────────────────────────────── */
+    .r {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+    .r.v { opacity: 1; transform: translateY(0); }
+
+    /* ─── Nav ───────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 18px 24px;
+      background: rgba(10,10,10,.82);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    nav .ni {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.28);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 99px;
+      padding: 6px 14px;
+    }
+    .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: blink 2.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.35; } }
+
+    /* ─── Hero ──────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+      position: relative;
+      text-align: center;
+    }
+
+    .hero-q {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5.5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -.025em;
+      margin-bottom: 16px;
+    }
+    /* text reveal via overflow clip */
+    .hero-q .l  { display: block; overflow: hidden; }
+    .hero-q .li {
+      display: block;
+      animation: su .9s cubic-bezier(.16,1,.3,1) both;
+    }
+    .hero-q .l:nth-child(2) .li { animation-delay: .07s; }
+    .hero-q .l:nth-child(3) .li { animation-delay: .14s; }
+    @keyframes su { from { transform: translateY(105%); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+    .hero-s {
+      font-size: clamp(.95rem,2vw,1.12rem);
+      color: rgba(255,255,255,.45);
+      max-width: 420px;
+      margin: 0 auto 32px;
+      animation: fi .9s .3s ease both;
+    }
+    .hero-a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      animation: fi .9s .4s ease both;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.25);
+    }
+    @keyframes fi { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ─── Sections shared ───────────────────────────────────── */
+    section { padding: 88px 0; position: relative; z-index: 1; }
+
+    .eyebrow {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 18px;
+    }
+    .sh {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.75rem,3.8vw,2.5rem);
+      font-weight: 700;
+      line-height: 1.18;
+      margin-bottom: 52px;
+    }
+
+    /* ─── Problem ───────────────────────────────────────────── */
+    #problem {
+      background: var(--bg);
+      border-top: 1px solid rgba(255,255,255,.04);
+      padding: 96px 0 112px;
+    }
+
+    .pg {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .pc {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      align-items: center;
+      gap: 32px;
+      padding: 36px 40px;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      background: var(--card);
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: background .3s, border-color .3s, transform .25s;
+    }
+    .pc::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(74,222,128,.04) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .35s;
+    }
+    .pc:hover {
+      background: #151515;
+      border-color: rgba(74,222,128,.18);
+      transform: translateX(6px);
+    }
+    .pc:hover::before { opacity: 1; }
+
+    /* left: big number */
+    .pn {
+      font-family: 'Syne', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+      background: var(--grad-tx);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      user-select: none;
+      opacity: .35;
+      transition: opacity .3s;
+    }
+    .pc:hover .pn { opacity: 1; }
+
+    /* middle: text */
+    .pc-mid {}
+    .pt {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 700;
+      line-height: 1.4;
+      color: rgba(255,255,255,.88);
+    }
+
+    /* right: SVG illustration */
+    .p-svg {
+      width: 52px; height: 52px;
+      flex-shrink: 0;
+      opacity: .55;
+      transition: opacity .3s;
+    }
+    .pc:hover .p-svg { opacity: 1; }
+
+    @media (max-width: 600px) {
+      .pc {
+        grid-template-columns: 48px 1fr;
+        gap: 20px;
+        padding: 28px 24px;
+      }
+      .p-svg { display: none; }
+    }
+
+    /* ─── What ──────────────────────────────────────────────── */
+    #what {}
+
+    .wt {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.35rem,2.8vw,1.95rem);
+      font-weight: 700;
+      line-height: 1.5;
+      color: rgba(255,255,255,.88);
+      max-width: 760px;
+    }
+    .wt .ag { color: var(--green); }
+    .wt .au { color: var(--gold); }
+
+    .wd {
+      width: 52px; height: 3px;
+      background: var(--grad);
+      border-radius: 99px;
+      margin: 30px 0;
+    }
+    .ws {
+      font-size: .95rem;
+      color: rgba(255,255,255,.35);
+      max-width: 480px;
+      line-height: 1.65;
+    }
+
+    /* ─── Features ──────────────────────────────────────────── */
+    #features { background: var(--bg2); border-top: 1px solid rgba(255,255,255,.04); }
+
+    .fg {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 14px;
+    }
+    @media (min-width: 900px) { .fg { grid-template-columns: repeat(4,1fr); } }
+
+    .fi-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: 28px 22px;
+      transition: border-color .3s, transform .3s, box-shadow .3s;
+    }
+    .fi-card:hover {
+      border-color: rgba(74,222,128,.2);
+      transform: translateY(-4px);
+      box-shadow: 0 0 36px rgba(74,222,128,.06);
+    }
+    .fi-em {
+      font-size: 1.9rem;
+      display: block;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+    .fi-t {
+      font-family: 'Syne', sans-serif;
+      font-size: .92rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+    .fi-d {
+      font-size: .82rem;
+      color: rgba(255,255,255,.38);
+      line-height: 1.6;
+    }
+
+    /* ─── App Preview ───────────────────────────────────────── */
+    #preview {
+      background: var(--bg);
+      border-top: 1px solid rgba(255,255,255,.04);
+      overflow: hidden;
+    }
+
+    .preview-scroll {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 8px 24px 32px;
+    }
+    @media (max-width: 860px) {
+      .preview-scroll {
+        justify-content: flex-start;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding: 8px 24px 28px;
+        gap: 20px;
+      }
+      .preview-scroll::-webkit-scrollbar { display: none; }
+    }
+
+    /* ── iPhone shell ── */
+    .iphone {
+      flex-shrink: 0;
+      width: 260px;
+      height: 560px;
+      border-radius: 44px;
+      border: 2px solid rgba(255,255,255,.13);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        0 0 0 8px rgba(255,255,255,.03),
+        0 36px 90px rgba(0,0,0,.75),
+        0 0 70px rgba(74,222,128,.07);
+      position: relative;
+      scroll-snap-align: center;
+      transition: transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s ease;
+      overflow: hidden; /* clips screen to rounded corners — the key */
+    }
+    .iphone:hover {
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.06),
+        0 0 0 8px rgba(255,255,255,.04),
+        0 52px 110px rgba(0,0,0,.8),
+        0 0 90px rgba(74,222,128,.13);
+    }
+    /* stagger tilt */
+    .iphone:nth-child(1) { transform: rotate(-2.5deg) translateY(16px); }
+    .iphone:nth-child(1):hover { transform: rotate(0deg) translateY(4px); }
+    .iphone:nth-child(2) { transform: rotate(0deg) translateY(0); }
+    .iphone:nth-child(2):hover { transform: translateY(-8px); }
+    .iphone:nth-child(3) { transform: rotate(2.5deg) translateY(16px); }
+    .iphone:nth-child(3):hover { transform: rotate(0deg) translateY(4px); }
+
+    @media (max-width: 860px) {
+      .iphone:nth-child(1),
+      .iphone:nth-child(2),
+      .iphone:nth-child(3) { transform: none; }
+      .iphone:hover { transform: none !important; box-shadow: none; }
+    }
+
+    /* screen — position absolute, covers 100% of the iPhone interior */
+    .screen {
+      position: absolute;
+      inset: 0;
+      background: #0c0c0c;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      z-index: 1;
+    }
+    /* bottom fade — content overflow indicator */
+    .screen::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, #0c0c0c 88%);
+      pointer-events: none;
+      z-index: 4;
+    }
+    /* bottom home bar */
+    .screen::before {
+      content: '';
+      position: absolute;
+      bottom: 10px;
+      left: 50%; transform: translateX(-50%);
+      width: 100px; height: 4px;
+      background: rgba(255,255,255,.18);
+      border-radius: 99px;
+      z-index: 5;
+    }
+
+    /* Dynamic Island — drawn on top of screen */
+    .island {
+      position: absolute;
+      top: 12px;
+      left: 50%; transform: translateX(-50%);
+      width: 100px; height: 30px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 10;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.07);
+    }
+    .island::after {
+      content: '';
+      position: absolute;
+      right: 9px; top: 50%;
+      transform: translateY(-50%);
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: #0d1a12;
+      border: 1.5px solid #1a3a22;
+    }
+
+    /* ── Shared UI primitives ── */
+    .s-hdr {
+      /* padding-top clears the Dynamic Island (12px top + 30px height + 10px gap) */
+      padding: 52px 16px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .s-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: .85rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      background: var(--grad-tx);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .s-score {
+      font-family: 'Syne', sans-serif;
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--gold);
+      background: rgba(251,191,36,.1);
+      border: 1px solid rgba(251,191,36,.2);
+      border-radius: 99px;
+      padding: 3px 10px;
+    }
+    .s-body {
+      padding: 4px 12px 52px; /* 52px bottom: content stays above fade+home bar */
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+    }
+    .s-body > * { flex-shrink: 0; } /* no compression — let content overflow naturally */
+
+    .s-label {
+      font-size: .58rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.3);
+      margin-bottom: 4px;
+    }
+    .s-title {
+      font-family: 'Syne', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+    .s-sub {
+      font-size: .68rem;
+      color: rgba(255,255,255,.35);
+      margin-bottom: 10px;
+    }
+
+    /* cards inside screen */
+    .s-card {
+      background: #161616;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .s-card:last-child { margin-bottom: 0; }
+
+    /* mini bar */
+    .s-bar-wrap {
+      height: 5px;
+      background: rgba(255,255,255,.08);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 7px;
+    }
+    .s-bar {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--grad);
+      box-shadow: 0 0 8px rgba(74,222,128,.35);
+    }
+
+    .s-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .68rem;
+    }
+    .s-row .lbl { color: rgba(255,255,255,.45); }
+    .s-row .val {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .s-row .val.g { color: var(--green); }
+
+    /* streak chip */
+    .s-streak {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(251,191,36,.1);
+      border: 1px solid rgba(251,191,36,.2);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--gold);
+      flex-shrink: 0;
+      align-self: flex-start;
+    }
+
+    /* activity list */
+    .s-act {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      font-size: .68rem;
+    }
+    .s-act:last-child { border-bottom: none; padding-bottom: 0; }
+    .s-act .name { color: rgba(255,255,255,.65); }
+    .s-act .amt {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .s-dot-act {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+      display: inline-block;
+    }
+
+    /* ── Screen 2: quest levels ── */
+    .q-levels {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin: 12px 0 16px;
+      padding: 0 2px;
+    }
+    .q-lline {
+      position: absolute;
+      top: 17px; left: 17px; right: 17px;
+      height: 2px;
+      background: rgba(255,255,255,.08);
+    }
+    .q-lfill {
+      position: absolute;
+      top: 17px; left: 17px;
+      height: 2px;
+      width: 65%;
+      background: var(--grad);
+      box-shadow: 0 0 8px rgba(74,222,128,.4);
+    }
+    .q-lvl {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+      z-index: 1;
+    }
+    .q-dot {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: .6rem;
+      font-weight: 800;
+      border: 1.5px solid;
+    }
+    .q-dot.done { background: var(--grad); border-color: transparent; color: #060606; box-shadow: 0 0 10px rgba(74,222,128,.3); }
+    .q-dot.on   { background: rgba(74,222,128,.12); border-color: var(--green); color: var(--green); }
+    .q-dot.off  { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.1); color: rgba(255,255,255,.3); }
+    .q-amt {
+      font-size: .55rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: rgba(255,255,255,.45);
+      white-space: nowrap;
+    }
+    .q-amt.on { color: var(--green); }
+
+    .s-franky-msg {
+      background: rgba(74,222,128,.06);
+      border: 1px solid rgba(74,222,128,.12);
+      border-radius: 10px;
+      padding: 9px 11px;
+      font-size: .63rem;
+      color: rgba(255,255,255,.55);
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+    .s-franky-msg strong { color: var(--green); }
+
+    /* ── Screen 3: badges ── */
+    .s-badges {
+      display: flex;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .s-badge {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+    .s-badge .b-ico { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+    .s-badge .b-name {
+      font-size: .52rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.45);
+      line-height: 1.3;
+    }
+    .s-badge.unlocked { border-color: rgba(74,222,128,.2); background: rgba(74,222,128,.05); }
+    .s-badge.unlocked .b-name { color: var(--green); }
+
+    /* health score */
+    .s-health {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #161616;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .s-ring {
+      width: 48px; height: 48px;
+      flex-shrink: 0;
+    }
+    .s-ring-bg { fill: none; stroke: rgba(255,255,255,.07); stroke-width: 4; }
+    .s-ring-fill {
+      fill: none;
+      stroke: url(#ringGrad);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 113;
+      stroke-dashoffset: 30; /* 74/100 = 74%, offset = 113*(1-.74) ≈ 29 */
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+    .s-ring-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      fill: var(--white);
+      dominant-baseline: middle;
+      text-anchor: middle;
+    }
+    .s-health-txt .h-val {
+      font-family: 'Syne', sans-serif;
+      font-size: .82rem;
+      font-weight: 800;
+      background: var(--grad-tx);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .s-health-txt .h-lbl {
+      font-size: .62rem;
+      color: rgba(255,255,255,.35);
+      margin-top: 1px;
+    }
+
+    /* scroll hint */
+    .scroll-hint {
+      display: none;
+      text-align: center;
+      margin-top: 14px;
+      font-size: .7rem;
+      color: rgba(255,255,255,.2);
+      letter-spacing: .08em;
+    }
+    @media (max-width: 860px) { .scroll-hint { display: block; } }
+
+    /* ─── Quest ─────────────────────────────────────────────── */
+    #quest {}
+
+    .qwrap {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .qcard {
+      background: var(--card);
+      border: 1px solid rgba(74,222,128,.12);
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    .qcard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--grad);
+    }
+
+    .qtop {
+      padding: 28px 30px 24px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .qtype {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 5px;
+    }
+    .qname {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .qbadge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(74,222,128,.07);
+      border: 1px solid rgba(74,222,128,.18);
+      border-radius: 6px;
+      padding: 6px 13px;
+      font-family: 'Syne', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    .qbody { padding: 30px 30px 26px; }
+
+    /* Level track */
+    .qtrack {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      padding-top: 22px;
+    }
+    .tline {
+      position: absolute;
+      top: 43px;
+      left: 22px; right: 22px;
+      height: 2px;
+      background: rgba(255,255,255,.07);
+      border-radius: 99px;
+    }
+    .tfill {
+      position: absolute;
+      top: 43px;
+      left: 22px;
+      height: 2px;
+      width: 0;
+      background: var(--grad);
+      border-radius: 99px;
+      box-shadow: 0 0 10px rgba(74,222,128,.5);
+      transition: width 1.6s cubic-bezier(.22,1,.36,1);
+    }
+
+    .lpin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      flex: 1;
+    }
+
+    .lc {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: .72rem;
+      font-weight: 800;
+      border: 2px solid transparent;
+    }
+    .lc.done {
+      background: var(--grad);
+      color: #080808;
+      box-shadow: 0 0 14px rgba(74,222,128,.35);
+    }
+    .lc.active {
+      background: rgba(74,222,128,.1);
+      border-color: var(--green);
+      color: var(--green);
+      animation: gpulse 2.5s ease-in-out infinite;
+    }
+    .lc.locked {
+      background: rgba(255,255,255,.03);
+      border-color: rgba(255,255,255,.1);
+      color: rgba(255,255,255,.3);
+    }
+    @keyframes gpulse {
+      0%,100% { box-shadow: 0 0 12px rgba(74,222,128,.3); }
+      50%      { box-shadow: 0 0 22px rgba(74,222,128,.6), 0 0 8px rgba(74,222,128,.3); }
+    }
+
+    .ll {
+      text-align: center;
+      line-height: 1.35;
+    }
+    .ll .amt {
+      font-family: 'Syne', sans-serif;
+      font-size: .68rem;
+      font-weight: 700;
+      display: block;
+      color: rgba(255,255,255,.65);
+    }
+    .ll .amt.on { color: var(--green); }
+    .ll .lvn {
+      font-size: .58rem;
+      color: var(--muted);
+      display: block;
+    }
+
+    /* Progress bar */
+    .qpbar-row {
+      margin-bottom: 20px;
+    }
+    .qph {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .qpl {
+      font-size: .76rem;
+      color: rgba(255,255,255,.35);
+    }
+    .qpa {
+      font-family: 'Syne', sans-serif;
+      font-size: .8rem;
+    }
+    .qpa .c { color: var(--green); font-weight: 700; }
+    .qpa .t { color: rgba(255,255,255,.28); }
+
+    .pbar {
+      height: 6px;
+      background: rgba(255,255,255,.07);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .pbfill {
+      height: 100%;
+      width: 0;
+      background: var(--grad);
+      border-radius: 99px;
+      box-shadow: 0 0 8px rgba(74,222,128,.4);
+      transition: width 1.6s cubic-bezier(.22,1,.36,1);
+    }
+
+    .fsays {
+      background: rgba(74,222,128,.04);
+      border: 1px solid rgba(74,222,128,.1);
+      border-radius: 10px;
+      padding: 13px 17px;
+      font-size: .81rem;
+      color: rgba(255,255,255,.45);
+      line-height: 1.55;
+    }
+    .fsays strong { color: var(--green); font-weight: 600; }
+
+    /* ─── Quote ─────────────────────────────────────────────── */
+    #qt { background: var(--bg2); border-top: 1px solid rgba(255,255,255,.04); padding: 100px 0; }
+
+    .qi {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .qmark {
+      font-family: 'Syne', sans-serif;
+      font-size: 4.5rem;
+      line-height: .75;
+      color: rgba(74,222,128,.13);
+      display: block;
+      margin-bottom: 12px;
+      user-select: none;
+    }
+    .qtext {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.3rem,2.8vw,2rem);
+      font-weight: 700;
+      line-height: 1.48;
+      color: rgba(255,255,255,.9);
+    }
+    .qattr {
+      margin-top: 28px;
+      font-size: .73rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.18);
+    }
+
+    /* ─── Form ──────────────────────────────────────────────── */
+    #waitlist {}
+
+    .fc {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .fcard {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 20px;
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .fcard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--grad);
+    }
+
+    .fh {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .fs-sub {
+      font-size: .87rem;
+      color: rgba(255,255,255,.37);
+      margin-bottom: 34px;
+      line-height: 1.6;
+    }
+
+    .fg-row { margin-bottom: 16px; }
+    .fl {
+      display: block;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.3);
+      margin-bottom: 7px;
+    }
+    .fin, .fsel {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 8px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .fin:focus, .fsel:focus {
+      border-color: rgba(74,222,128,.4);
+      box-shadow: 0 0 0 3px rgba(74,222,128,.07);
+    }
+    .fin::placeholder { color: rgba(255,255,255,.17); }
+    .fsel option { background: #1a1a1a; }
+
+    .fsel-w { position: relative; }
+    .fsel-w::after {
+      content: '▾';
+      position: absolute;
+      right: 13px; top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,.28);
+      pointer-events: none;
+      font-size: .72rem;
+    }
+
+    .btn-sub { width: 100%; margin-top: 6px; padding: 14px; font-size: .95rem; justify-content: center; }
+
+    .fprivacy {
+      text-align: center;
+      margin-top: 13px;
+      font-size: .71rem;
+      color: rgba(255,255,255,.17);
+    }
+
+    /* Success */
+    .fdone {
+      display: none;
+      text-align: center;
+      padding: 16px 0;
+    }
+    .fdone .ck { font-size: 3.2rem; display: block; margin-bottom: 18px; }
+    .fdone h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .fdone p { color: rgba(255,255,255,.38); font-size: .88rem; }
+
+    /* ─── Footer ────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,.05);
+      padding: 36px 24px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .fl2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      margin-bottom: 8px;
+    }
+    .fsub {
+      font-size: .77rem;
+      color: rgba(255,255,255,.2);
+      letter-spacing: .06em;
+    }
+
+    /* ─── Responsive ────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .fcard { padding: 36px 22px; }
+      .qbody { padding: 22px 18px 20px; }
+      .qtop  { padding: 22px 18px 18px; }
+      .lc    { width: 36px; height: 36px; }
+      .sh    { margin-bottom: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cg"></div>
+  <div class="amb amb-1"></div>
+  <div class="amb amb-2"></div>
+
+  <!-- ── Nav ── -->
+  <nav>
+    <div class="ni">
+      <span class="logo gt">FRANKY</span>
+      <div class="nav-pill"><span class="dot"></span>Bientôt disponible</div>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section id="hero">
+    <div class="wrap">
+      <h1 class="hero-q">
+        <span class="l"><span class="li">Sais-tu vraiment</span></span>
+        <span class="l"><span class="li">où tu vas</span></span>
+        <span class="l"><span class="li gt">dans la vie ?</span></span>
+      </h1>
+      <p class="hero-s">Appart, voyages, voiture : Franky te donne une vision claire pour atteindre ce qui compte pour toi.</p>
+      <div class="hero-a">
+        <a href="#waitlist" class="btn">Je veux Franky dans ma vie</a>
+        <div class="hero-badge">
+          <span class="dot"></span>
+          Bientôt disponible
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Problem ── -->
+  <section id="problem">
+    <div class="wrap">
+      <p class="eyebrow r">La <span class="gt">réalité</span></p>
+      <h2 class="sh r">Trois <span class="gt">vérités</span> que tu<br>ne veux pas entendre.</h2>
+      <div class="pg">
+        <div class="pc r">
+          <span class="pn">1</span>
+          <div class="pc-mid">
+            <p class="pt">Tu gagnes de l'argent mais tu ne sais pas vraiment où il va.</p>
+          </div>
+          <svg class="p-svg" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="20" cy="30" r="11" stroke="#4ade80" stroke-width="1.8" stroke-dasharray="3 2.5"/>
+            <text x="20" y="35" text-anchor="middle" font-size="9" fill="#4ade80" font-family="sans-serif" font-weight="bold">CHF</text>
+            <path d="M30 24 C35 19 40 15 46 11" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M39 9 L46 11 L44 18" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M32 21 C36 17 39 14 43 13" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round" opacity=".4"/>
+          </svg>
+        </div>
+        <div class="pc r">
+          <span class="pn">2</span>
+          <div class="pc-mid">
+            <p class="pt">Tu as des rêves, mais aucun plan concret pour y arriver.</p>
+          </div>
+          <svg class="p-svg" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M9 32 Q9 23 18 23 Q18 15 27 15 Q36 15 36 23 Q43 23 43 32 Z" stroke="#4ade80" stroke-width="1.8" stroke-linejoin="round"/>
+            <line x1="22" y1="39" x2="22" y2="44" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="27" y1="37" x2="27" y2="44" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="32" y1="39" x2="32" y2="44" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="pc r">
+          <span class="pn">3</span>
+          <div class="pc-mid">
+            <p class="pt">Tu te lèves chaque matin sans savoir si tu avances vraiment.</p>
+          </div>
+          <svg class="p-svg" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="26" cy="28" r="14" stroke="#4ade80" stroke-width="1.8"/>
+            <path d="M26 21 L26 28 L31 32" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 15 L10 11M38 15 L42 11" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M22 42 L26 46 L30 42" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".45"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── What ── -->
+  <section id="what">
+    <div class="wrap">
+      <div class="r">
+        <p class="eyebrow">Franky c'est <span class="gt">quoi</span></p>
+        <p class="wt">
+          Franky, c'est <span class="ag">le pote qui te dit la vérité</span>.<br>
+          Il connaît tes revenus, tes dépenses, tes rêves.<br>
+          Et chaque jour, il te montre si tu <span class="ag">avances</span><br>
+          ou si tu <span class="au">dérapes</span>.
+        </p>
+        <div class="wd"></div>
+        <p class="ws">Pas un comptable. Pas une appli bancaire.<br>Ton pote financier — humain, direct, et qui veut ton bien.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features ── -->
+  <section id="features">
+    <div class="wrap">
+      <p class="eyebrow r">Ce que Franky <span class="gt">fait</span></p>
+      <h2 class="sh r">Ton <span class="gt">arsenal</span> au quotidien.</h2>
+      <div class="fg">
+        <div class="fi-card r">
+          <span class="fi-em">📊</span>
+          <p class="fi-t">Track ta vie pro</p>
+          <p class="fi-d">Revenus, activités, temps — tout en un seul endroit. Enfin la clarté.</p>
+        </div>
+        <div class="fi-card r">
+          <span class="fi-em">⚔️</span>
+          <p class="fi-t">Tes quêtes de vie</p>
+          <p class="fi-d">Appart, voiture, liberté financière, voyage. Chaque rêve devient une mission.</p>
+        </div>
+        <div class="fi-card r">
+          <span class="fi-em">🤖</span>
+          <p class="fi-t">Franky IA</p>
+          <p class="fi-d">Ton conseiller personnel. Il analyse, te challenge, te guide — au bon moment.</p>
+        </div>
+        <div class="fi-card r">
+          <span class="fi-em">🔥</span>
+          <p class="fi-t">Streaks &amp; niveaux</p>
+          <p class="fi-d">Streaks, badges, niveaux. Une fois lancé, tu ne peux plus t'arrêter.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── App Preview ── -->
+  <section id="preview">
+    <div class="wrap">
+      <p class="eyebrow r" style="text-align:center">Aperçu de <span class="gt">l'app</span></p>
+      <h2 class="sh r" style="text-align:center;max-width:560px;margin-left:auto;margin-right:auto;margin-bottom:40px">À quoi ressemble<br><span class="gt">Franky</span> au quotidien.</h2>
+    </div>
+
+    <div class="preview-scroll r">
+
+      <!-- ── iPhone 1 : Dashboard ── -->
+      <div class="iphone">
+        <div class="screen">
+          <div class="s-hdr">
+            <span class="s-logo">FRANKY</span>
+            <span class="s-score">⭐ 87 pts</span>
+          </div>
+          <div class="s-body">
+            <div class="s-streak">🔥 12 jours de streak</div>
+
+            <!-- revenue card -->
+            <div class="s-card">
+              <div class="s-row" style="margin-bottom:4px">
+                <span class="lbl">Revenus du mois</span>
+                <span class="val">3'240 <span style="font-weight:400;color:rgba(255,255,255,.3);font-size:.6rem">/ 4'000 CHF</span></span>
+              </div>
+              <div class="s-bar-wrap">
+                <div class="s-bar" style="width:81%"></div>
+              </div>
+              <div class="s-row" style="margin-top:5px">
+                <span class="lbl">Objectif mensuel</span>
+                <span class="val g">81%</span>
+              </div>
+            </div>
+
+            <!-- activities -->
+            <div class="s-card">
+              <div class="s-label">Revenus par activité</div>
+              <div class="s-act">
+                <span class="name"><span class="s-dot-act" style="background:#4ade80"></span>Padel</span>
+                <span class="amt">800 CHF</span>
+              </div>
+              <div class="s-act">
+                <span class="name"><span class="s-dot-act" style="background:#fbbf24"></span>Vidéo</span>
+                <span class="amt">1'440 CHF</span>
+              </div>
+              <div class="s-act">
+                <span class="name"><span class="s-dot-act" style="background:#86efac"></span>Enseignement</span>
+                <span class="amt">1'000 CHF</span>
+              </div>
+            </div>
+
+            <!-- expenses -->
+            <div class="s-card">
+              <div class="s-label" style="color:rgba(251,191,36,.7)">Dépenses du mois</div>
+              <div class="s-act">
+                <span class="name">🏠 Loyer</span>
+                <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:rgba(255,120,120,.85)">−900 CHF</span>
+              </div>
+              <div class="s-act">
+                <span class="name">🛒 Nourriture</span>
+                <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:rgba(255,120,120,.85)">−420 CHF</span>
+              </div>
+              <div class="s-act">
+                <span class="name">🎮 Loisirs</span>
+                <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:rgba(255,120,120,.85)">−320 CHF</span>
+              </div>
+              <div class="s-act" style="border-bottom:none">
+                <span class="name">📦 Autres</span>
+                <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:rgba(255,120,120,.85)">−200 CHF</span>
+              </div>
+              <div style="margin-top:7px;padding-top:7px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:.6rem;font-weight:600;color:rgba(255,255,255,.35)">Solde net du mois</span>
+                <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:.78rem;color:var(--green)">+1'400 CHF</span>
+              </div>
+            </div>
+
+            <!-- quick tip -->
+            <div class="s-card" style="background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.1)">
+              <div class="s-row">
+                <span class="lbl" style="color:var(--green)">🤖 Franky</span>
+              </div>
+              <p style="font-size:.63rem;color:rgba(255,255,255,.5);margin-top:4px;line-height:1.5">Il te manque 760 CHF pour ton objectif mensuel. À ton rythme, une session de padel en plus cette semaine et c'est dans la poche.</p>
+            </div>
+          </div>
+        </div>
+        <div class="island"></div>
+      </div>
+
+      <!-- ── iPhone 2 : Quête ── -->
+      <div class="iphone">
+        <div class="screen">
+          <div class="s-hdr">
+            <span class="s-logo">FRANKY</span>
+            <span style="font-size:.65rem;color:rgba(255,255,255,.3)">Quêtes</span>
+          </div>
+          <div class="s-body">
+            <div class="s-card" style="background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.15)">
+              <div class="s-label" style="color:var(--green)">Quête active · Voyage</div>
+              <div class="s-title">✈️ Mon voyage de rêve</div>
+
+              <!-- level nodes -->
+              <div class="q-levels">
+                <div class="q-lline"></div>
+                <div class="q-lfill"></div>
+                <div class="q-lvl">
+                  <div class="q-dot done">✓</div>
+                  <span class="q-amt">200</span>
+                </div>
+                <div class="q-lvl">
+                  <div class="q-dot done">✓</div>
+                  <span class="q-amt">500</span>
+                </div>
+                <div class="q-lvl">
+                  <div class="q-dot on">3</div>
+                  <span class="q-amt on">1'000</span>
+                </div>
+                <div class="q-lvl">
+                  <div class="q-dot off">4</div>
+                  <span class="q-amt">2'000</span>
+                </div>
+              </div>
+
+              <!-- progress bar -->
+              <div class="s-row" style="margin-bottom:5px">
+                <span class="lbl">Niveau 3 en cours</span>
+                <span class="val g">520 <span style="color:rgba(255,255,255,.3);font-weight:400">/ 1'000</span></span>
+              </div>
+              <div class="s-bar-wrap">
+                <div class="s-bar" style="width:52%"></div>
+              </div>
+
+              <div class="s-franky-msg" style="margin-top:10px">
+                <strong>Franky :</strong> Encore 480 CHF et tu pars en voyage 🌍<br>
+                <span style="color:rgba(255,255,255,.32);font-size:.6rem">À ton rythme actuel : dans 6 semaines.</span>
+              </div>
+            </div>
+
+            <!-- other quests teaser -->
+            <div class="s-card">
+              <div class="s-label" style="margin-bottom:8px">Autres quêtes</div>
+              <div class="s-act">
+                <span class="name">🚗 Voiture de rêve</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <div style="width:40px;height:3px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden"><div style="width:18%;height:100%;background:var(--gold)"></div></div>
+                  <span style="font-size:.58rem;color:rgba(255,255,255,.25)">Niv. 1</span>
+                </div>
+              </div>
+              <div class="s-act">
+                <span class="name">🏠 Premier appart</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <div style="width:40px;height:3px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden"><div style="width:35%;height:100%;background:var(--green)"></div></div>
+                  <span style="font-size:.58rem;color:rgba(255,255,255,.25)">Niv. 2</span>
+                </div>
+              </div>
+              <div class="s-act" style="border-bottom:none">
+                <span class="name">🏔️ Liberté financière</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <div style="width:40px;height:3px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden"><div style="width:8%;height:100%;background:rgba(255,255,255,.3)"></div></div>
+                  <span style="font-size:.58rem;color:rgba(255,255,255,.25)">Niv. 1</span>
+                </div>
+              </div>
+              <div style="margin-top:auto;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
+                <p style="font-size:.6rem;color:rgba(255,255,255,.28);line-height:1.5">💡 Concentre-toi sur le voyage — t'es à 75%. Les autres quêtes attendent.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="island"></div>
+      </div>
+
+      <!-- ── iPhone 3 : Mon profil ── -->
+      <div class="iphone">
+        <div class="screen">
+          <div class="s-hdr">
+            <span class="s-logo">FRANKY</span>
+            <span style="font-size:.65rem;color:rgba(255,255,255,.3)">Mon profil</span>
+          </div>
+          <div class="s-body">
+
+            <!-- avatar + nom + titre -->
+            <div class="s-card" style="display:flex;align-items:center;gap:12px;padding:12px 14px">
+              <div style="width:42px;height:42px;border-radius:50%;background:var(--grad);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#060606;box-shadow:0 0 14px rgba(74,222,128,.3)">S</div>
+              <div>
+                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;color:var(--white);line-height:1.2">Seb</div>
+                <div style="font-size:.6rem;color:var(--green);font-weight:600;margin-top:2px">Indépendant · Niv. 4</div>
+              </div>
+              <div style="margin-left:auto;text-align:right">
+                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.75rem;background:var(--grad-tx);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">⭐ 87 pts</div>
+              </div>
+            </div>
+
+            <!-- stats row -->
+            <div style="display:flex;gap:6px">
+              <div style="flex:1;background:#161616;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px 6px;text-align:center">
+                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--green)">3'200</div>
+                <div style="font-size:.55rem;color:rgba(255,255,255,.3);margin-top:2px">CHF/mois</div>
+              </div>
+              <div style="flex:1;background:#161616;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px 6px;text-align:center">
+                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--gold)">🔥 12j</div>
+                <div style="font-size:.55rem;color:rgba(255,255,255,.3);margin-top:2px">Streak</div>
+              </div>
+              <div style="flex:1;background:#161616;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px 6px;text-align:center">
+                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--white)">74/100</div>
+                <div style="font-size:.55rem;color:rgba(255,255,255,.3);margin-top:2px">Score</div>
+              </div>
+            </div>
+
+            <!-- activités -->
+            <div class="s-card" style="padding:10px 14px">
+              <div class="s-label" style="margin-bottom:7px">Mes activités</div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap">
+                <span style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:6px;padding:3px 8px;font-size:.58rem;font-weight:600;color:var(--green)">🎾 Padel</span>
+                <span style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.18);border-radius:6px;padding:3px 8px;font-size:.58rem;font-weight:600;color:var(--gold)">🎬 Vidéo</span>
+                <span style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:3px 8px;font-size:.58rem;font-weight:600;color:rgba(255,255,255,.5)">📚 Enseignement</span>
+                <span style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:3px 8px;font-size:.58rem;font-weight:600;color:rgba(255,255,255,.5)">🎵 Musique</span>
+              </div>
+            </div>
+
+            <!-- objectifs financiers -->
+            <div class="s-card" style="padding:10px 14px">
+              <div class="s-label" style="margin-bottom:8px">Objectifs financiers</div>
+
+              <div style="margin-bottom:7px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                  <span style="font-size:.62rem;color:rgba(255,255,255,.6)">✈️ Voyage</span>
+                  <span style="font-family:'Syne',sans-serif;font-size:.6rem;font-weight:700;color:var(--green)">75%</span>
+                </div>
+                <div class="s-bar-wrap"><div class="s-bar" style="width:75%"></div></div>
+              </div>
+
+              <div style="margin-bottom:7px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                  <span style="font-size:.62rem;color:rgba(255,255,255,.6)">🚗 Voiture</span>
+                  <span style="font-family:'Syne',sans-serif;font-size:.6rem;font-weight:700;color:var(--gold)">32%</span>
+                </div>
+                <div class="s-bar-wrap"><div class="s-bar" style="width:32%;background:var(--gold);box-shadow:0 0 8px rgba(251,191,36,.35)"></div></div>
+              </div>
+
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                  <span style="font-size:.62rem;color:rgba(255,255,255,.6)">🏔️ Liberté financière</span>
+                  <span style="font-family:'Syne',sans-serif;font-size:.6rem;font-weight:700;color:rgba(255,255,255,.4)">12%</span>
+                </div>
+                <div class="s-bar-wrap"><div class="s-bar" style="width:12%;background:rgba(255,255,255,.25);box-shadow:none"></div></div>
+              </div>
+            </div>
+
+            <!-- franky message -->
+            <div class="s-franky-msg">
+              <strong>Franky :</strong> Seb, t'es sur une belle trajectoire. Ton voyage est à 75% — continue comme ça et tu pars cet été 🌍<br><br>
+              <span style="color:rgba(255,255,255,.3)">Prochaine étape : active la quête Voiture pour ne pas perdre ton élan.</span>
+            </div>
+
+          </div>
+        </div>
+        <div class="island"></div>
+      </div>
+
+    </div>
+    <p class="scroll-hint">← Glisse pour voir les écrans →</p>
+  </section>
+
+  <!-- ── Quest ── -->
+  <section id="quest">
+    <div class="wrap">
+      <p class="eyebrow r" style="text-align:center">Exemple de <span class="gt">quête</span></p>
+      <h2 class="sh r" style="text-align:center;max-width:500px;margin-left:auto;margin-right:auto">Chaque <span class="gt">rêve</span> devient<br>une mission concrète.</h2>
+
+      <div class="qwrap r">
+        <div class="qcard" id="qcard">
+          <div class="qtop">
+            <div>
+              <p class="qtype">Quête · Voyage</p>
+              <p class="qname">✈️ Mon voyage de rêve</p>
+            </div>
+            <div class="qbadge"><span class="dot"></span>Niveau 1 actif</div>
+          </div>
+
+          <div class="qbody">
+            <!-- Level track -->
+            <div class="qtrack">
+              <div class="tline"></div>
+              <div class="tfill" id="tfill"></div>
+
+              <div class="lpin">
+                <div class="lc active">1</div>
+                <div class="ll">
+                  <span class="amt on">200 CHF</span>
+                  <span class="lvn">En cours</span>
+                </div>
+              </div>
+              <div class="lpin">
+                <div class="lc locked">2</div>
+                <div class="ll">
+                  <span class="amt">500 CHF</span>
+                  <span class="lvn">Niv. 2</span>
+                </div>
+              </div>
+              <div class="lpin">
+                <div class="lc locked">3</div>
+                <div class="ll">
+                  <span class="amt">1'000 CHF</span>
+                  <span class="lvn">Niv. 3</span>
+                </div>
+              </div>
+              <div class="lpin">
+                <div class="lc locked">4</div>
+                <div class="ll">
+                  <span class="amt">2'000 CHF</span>
+                  <span class="lvn">Niv. 4</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="qpbar-row">
+              <div class="qph">
+                <span class="qpl">Progression vers le niveau 1</span>
+                <span class="qpa">
+                  <span class="c">130 CHF</span>
+                  <span class="t"> / 200 CHF</span>
+                </span>
+              </div>
+              <div class="pbar"><div class="pbfill" id="pbfill"></div></div>
+            </div>
+
+            <div class="fsays">
+              <strong>Franky dit :</strong> T'es à 70 CHF du premier palier. À ton rythme actuel, tu y es dans 2 semaines. Coupe deux sorties ce mois — c'est dans la poche.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Quote ── -->
+  <section id="qt">
+    <div class="wrap">
+      <div class="qi r">
+        <span class="qmark">"</span>
+        <p class="qtext">Une fois que tu as commencé à tracker ta vie sur Franky, tu ne peux plus t'en passer.</p>
+        <p class="qattr">— Ce que tu te diras dans 3 mois</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Form ── -->
+  <section id="waitlist">
+    <div class="wrap">
+      <div class="fc">
+        <div class="fcard r">
+          <div id="finner">
+            <h2 class="fh">Rejoins la <span class="gt">liste d'attente</span>.</h2>
+            <p class="fs-sub">Accès prioritaire à la bêta. Gratuit. On te contacte dès que c'est prêt.</p>
+            <form id="mform" novalidate>
+              <div class="fg-row">
+                <label class="fl" for="fp">Prénom</label>
+                <input class="fin" id="fp" type="text" placeholder="Thomas" required autocomplete="given-name" />
+              </div>
+              <div class="fg-row">
+                <label class="fl" for="fe">Email</label>
+                <input class="fin" id="fe" type="email" placeholder="thomas@exemple.ch" required autocomplete="email" />
+              </div>
+              <div class="fg-row">
+                <label class="fl" for="fsi">Ta situation</label>
+                <div class="fsel-w">
+                  <select class="fsel" id="fsi" required>
+                    <option value="" disabled selected>Choisir ta situation…</option>
+                    <option value="etudiant">Étudiant(e)</option>
+                    <option value="independant">Indépendant(e) / Freelance</option>
+                    <option value="salarie-side">Salarié(e) avec side projects</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-sub">Je rejoins la liste d'attente Franky</button>
+            </form>
+            <p class="fprivacy">🔒 Zéro spam. Données stockées en Suisse.</p>
+          </div>
+          <div class="fdone" id="fdone">
+            <span class="ck">🎉</span>
+            <h3 class="gt">Tu es dans la liste !</h3>
+            <p>On te contacte dès que la bêta ouvre.<br>Prépare-toi à reprendre le contrôle.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <p class="fl2 gt">FRANKY</p>
+    <p class="fsub">Bientôt disponible. Rejoins les premiers.</p>
+  </footer>
+
+  <script>
+    /* ── Cursor glow ── */
+    const cg = document.getElementById('cg');
+    document.addEventListener('mousemove', e => {
+      cg.style.left = e.clientX + 'px';
+      cg.style.top  = e.clientY + 'px';
+    });
+
+    /* ── Scroll reveal ── */
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        // stagger siblings with class 'r' in the same parent
+        const siblings = [...entry.target.parentElement.children]
+          .filter(c => c.classList.contains('r'));
+        const idx = siblings.indexOf(entry.target);
+        entry.target.style.transitionDelay = (idx * 0.09) + 's';
+        entry.target.classList.add('v');
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+    /* ── Quest animations on scroll ── */
+    const qcard  = document.getElementById('qcard');
+    const pbfill = document.getElementById('pbfill');
+    const tfill  = document.getElementById('tfill');
+
+    const qio = new IntersectionObserver(entries => {
+      if (!entries[0].isIntersecting) return;
+      pbfill.style.width = '65%';         // 130/200
+      tfill.style.width  = 'calc(12%)';   // barely past node 1
+      qio.disconnect();
+    }, { threshold: 0.35 });
+    if (qcard) qio.observe(qcard);
+
+    /* ── Smooth scroll ── */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    /* ── Form ── */
+    const form   = document.getElementById('mform');
+    const finner = document.getElementById('finner');
+    const fdone  = document.getElementById('fdone');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const fp  = document.getElementById('fp');
+      const fe  = document.getElementById('fe');
+      const fsi = document.getElementById('fsi');
+
+      const checks = [
+        { el: fp,  ok: fp.value.trim().length > 0 },
+        { el: fe,  ok: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fe.value.trim()) },
+        { el: fsi, ok: !!fsi.value },
+      ];
+
+      let valid = true;
+      checks.forEach(({ el, ok }) => {
+        if (!ok) {
+          valid = false;
+          el.style.borderColor = 'rgba(251,191,36,.45)';
+          el.style.boxShadow   = '0 0 0 3px rgba(251,191,36,.07)';
+          setTimeout(() => { el.style.borderColor = ''; el.style.boxShadow = ''; }, 2500);
+        }
+      });
+      if (!valid) return;
+
+      const btn = form.querySelector('.btn-sub');
+      btn.textContent = 'En route…';
+      btn.style.opacity = '.65';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        finner.style.display = 'none';
+        fdone.style.display  = 'block';
+      }, 800);
+    });
+  </script>
+</body>
+</html>
