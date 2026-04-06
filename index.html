@@ -25,7 +25,11 @@
 
     /* ─── Reset ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      max-width: 100%;
+    }
     body {
       background: var(--bg);
       color: var(--white);
@@ -33,6 +37,7 @@
       font-size: 16px;
       line-height: 1.65;
       overflow-x: hidden;
+      max-width: 100%;
     }
 
     /* ─── Grain ─────────────────────────────────────────────── */
@@ -190,45 +195,46 @@
       padding: 120px 0 80px;
       position: relative;
       text-align: center;
-    }
-    @media (max-width: 640px) {
-      #hero {
-        align-items: flex-start;
-        padding-top: 90px;
-        padding-bottom: 64px;
-        min-height: unset;
-      }
+      width: 100%;
+      max-width: 100%;
     }
 
     /* hero title FRANKY */
     .hero-title {
       font-family: 'Syne', sans-serif;
-      font-size: clamp(50px, 15vw, 130px);
+      font-size: clamp(40px, 12vw, 120px);
       font-weight: 800;
-      line-height: 1;
+      line-height: 1.1;
       letter-spacing: -.02em;
       background: linear-gradient(90deg, #4ade80 0%, #fbbf24 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      width: 100%;
+      max-width: 100%;
+      text-align: center;
       margin-bottom: 2px;
-      padding: 0 32px;
+      padding: 0 16px;
+      box-sizing: border-box;
       animation: fi .7s ease both;
     }
 
     /* hero tagline */
     .hero-tagline {
       font-family: 'Inter', sans-serif;
-      font-size: clamp(16px, 4vw, 32px);
+      font-size: clamp(16px, 2.4vw, 30px);
       font-weight: 500;
       color: #fff;
       margin-bottom: 48px;
-      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 14px;
       flex-wrap: wrap;
+      padding: 0 16px;
+      box-sizing: border-box;
       animation: fi .7s .1s ease both;
     }
     .hero-tagline .dot-sep {
@@ -241,12 +247,14 @@
 
     /* hero description below mockup */
     .hero-desc {
-      font-size: clamp(15px, 2vw, 19px);
+      font-size: clamp(15px, 1.4vw, 19px);
       color: rgba(255,255,255,.85);
+      width: 100%;
       max-width: 600px;
       margin: 32px auto 32px;
-      padding: 0 24px;
+      padding: 0 20px;
       line-height: 1.6;
+      box-sizing: border-box;
       animation: fi .7s .5s ease both;
     }
 
@@ -255,6 +263,10 @@
       flex-direction: column;
       align-items: center;
       gap: 14px;
+      width: 100%;
+      max-width: 100%;
+      padding: 0 20px;
+      box-sizing: border-box;
       animation: fi .7s .6s ease both;
     }
     .hero-badge {
@@ -272,10 +284,14 @@
     /* hero mockup phone */
     .hero-phone-wrap {
       margin-top: 52px;
+      width: 100%;
+      max-width: 100%;
       display: flex;
       justify-content: center;
+      box-sizing: border-box;
       animation: fi .9s .6s ease both;
     }
+    /* desktop: taille fixe */
     .hero-iphone {
       width: 220px !important;
       height: 460px !important;
@@ -296,33 +312,34 @@
         0 0 100px rgba(74,222,128,.15) !important;
     }
 
-    /* ─── Mobile tweaks ─────────────────────────────────────── */
+    /* ─── Nav mobile ────────────────────────────────────────── */
     @media (max-width: 640px) {
-      /* centre le logo Franky dans la nav */
       nav .ni { justify-content: center; }
       .nav-pill { display: none; }
-      /* badge bientôt disponible visible sur mobile */
-      .hero-badge { display: inline-flex; }
+    }
 
-      /* hero mobile */
-      .hero-title {
-        padding: 0 20px;
+    /* ─── Hero mobile (<768px) ──────────────────────────────── */
+    @media (max-width: 768px) {
+      #hero {
+        align-items: flex-start;
+        padding-top: 90px;
+        padding-bottom: 64px;
+        min-height: unset;
       }
       .hero-tagline {
-        gap: 10px;
-        margin-bottom: 36px;
+        font-size: clamp(15px, 4.5vw, 22px);
+        gap: 8px;
+        margin-bottom: 32px;
       }
+      /* mockup : capé à 80vw avec hauteur proportionnelle */
       .hero-iphone {
-        width: min(220px, 78vw) !important;
-        height: calc(min(220px, 78vw) * 2.09) !important;
+        width: min(220px, 80vw) !important;
+        height: calc(min(220px, 80vw) * 2.09) !important;
       }
-      .hero-desc {
-        font-size: 15px;
-        padding: 0 20px;
-      }
+      .hero-badge { display: inline-flex; }
       .hero-a .btn {
-        width: calc(100% - 40px);
-        max-width: 400px;
+        width: 100%;
+        max-width: 380px;
         justify-content: center;
       }
     }
