@@ -200,37 +200,62 @@
       }
     }
 
-    .hero-q {
+    /* hero title FRANKY */
+    .hero-title {
       font-family: 'Syne', sans-serif;
-      font-size: clamp(2rem, 5.5vw, 4rem);
+      font-size: clamp(50px, 15vw, 130px);
       font-weight: 800;
-      line-height: 1.08;
-      letter-spacing: -.025em;
-      margin-bottom: 16px;
+      line-height: 1;
+      letter-spacing: -.02em;
+      background: linear-gradient(90deg, #4ade80 0%, #fbbf24 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 2px;
+      padding: 0 32px;
+      animation: fi .7s ease both;
     }
-    /* text reveal via overflow clip */
-    .hero-q .l  { display: block; overflow: hidden; }
-    .hero-q .li {
-      display: block;
-      animation: su .9s cubic-bezier(.16,1,.3,1) both;
-    }
-    .hero-q .l:nth-child(2) .li { animation-delay: .07s; }
-    .hero-q .l:nth-child(3) .li { animation-delay: .14s; }
-    @keyframes su { from { transform: translateY(105%); opacity:0; } to { transform: translateY(0); opacity:1; } }
 
-    .hero-s {
-      font-size: clamp(.95rem,2vw,1.12rem);
-      color: rgba(255,255,255,.45);
-      max-width: 420px;
-      margin: 0 auto 32px;
-      animation: fi .9s .3s ease both;
+    /* hero tagline */
+    .hero-tagline {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(16px, 4vw, 32px);
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 48px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      animation: fi .7s .1s ease both;
     }
+    .hero-tagline .dot-sep {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #4ade80;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    /* hero description below mockup */
+    .hero-desc {
+      font-size: clamp(15px, 2vw, 19px);
+      color: rgba(255,255,255,.85);
+      max-width: 600px;
+      margin: 32px auto 32px;
+      padding: 0 24px;
+      line-height: 1.6;
+      animation: fi .7s .5s ease both;
+    }
+
     .hero-a {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 14px;
-      animation: fi .9s .4s ease both;
+      animation: fi .7s .6s ease both;
     }
     .hero-badge {
       display: inline-flex;
@@ -238,9 +263,9 @@
       gap: 7px;
       font-size: .7rem;
       font-weight: 600;
-      letter-spacing: .12em;
+      letter-spacing: .14em;
       text-transform: uppercase;
-      color: rgba(255,255,255,.25);
+      color: #4ade80;
     }
     @keyframes fi { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
@@ -276,8 +301,30 @@
       /* centre le logo Franky dans la nav */
       nav .ni { justify-content: center; }
       .nav-pill { display: none; }
-      /* masque le badge "Bientôt disponible" dans le hero */
-      .hero-badge { display: none; }
+      /* badge bientôt disponible visible sur mobile */
+      .hero-badge { display: inline-flex; }
+
+      /* hero mobile */
+      .hero-title {
+        padding: 0 20px;
+      }
+      .hero-tagline {
+        gap: 10px;
+        margin-bottom: 36px;
+      }
+      .hero-iphone {
+        width: min(220px, 78vw) !important;
+        height: calc(min(220px, 78vw) * 2.09) !important;
+      }
+      .hero-desc {
+        font-size: 15px;
+        padding: 0 20px;
+      }
+      .hero-a .btn {
+        width: calc(100% - 40px);
+        max-width: 400px;
+        justify-content: center;
+      }
     }
 
     /* ─── Sections shared ───────────────────────────────────── */
@@ -1241,19 +1288,15 @@
   <!-- ── Hero ── -->
   <section id="hero">
     <div class="wrap">
-      <h1 class="hero-q">
-        <span class="l"><span class="li">Sais-tu vraiment</span></span>
-        <span class="l"><span class="li">où tu vas</span></span>
-        <span class="l"><span class="li gt">dans la vie ?</span></span>
-      </h1>
-      <p class="hero-s">Appart, voyages, voiture : Franky, l'app qui te donne une vision claire pour atteindre ce qui compte pour toi.</p>
-      <div class="hero-a">
-        <a href="#waitlist" class="btn">Je veux Franky dans ma vie</a>
-        <div class="hero-badge">
-          <span class="dot"></span>
-          Bientôt disponible
-        </div>
-      </div>
+      <h1 class="hero-title">FRANKY</h1>
+
+      <p class="hero-tagline">
+        <span>Visualise</span>
+        <span class="dot-sep"></span>
+        <span>Planifie</span>
+        <span class="dot-sep"></span>
+        <span>Concrétise</span>
+      </p>
 
       <!-- mockup iPhone hero — écran quête active -->
       <div class="hero-phone-wrap">
@@ -1314,6 +1357,15 @@
             </div>
           </div>
           <div class="island"></div>
+        </div>
+      </div>
+
+      <p class="hero-desc">Appart, voyages, voiture : Franky, l'app qui te donne une vision claire pour atteindre ce qui compte pour toi.</p>
+
+      <div class="hero-a">
+        <a href="#waitlist" class="btn">Je veux Franky dans ma vie</a>
+        <div class="hero-badge">
+          ● BIENTÔT DISPONIBLE
         </div>
       </div>
 
